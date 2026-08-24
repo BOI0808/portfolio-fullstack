@@ -8,6 +8,7 @@ using Portfolio.Core.DTOs;
 using Portfolio.Core.Interfaces;
 using Portfolio.Infrastructure.Data;
 using Portfolio.Infrastructure.Repositories;
+using Portfolio.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +47,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 // ── FluentValidation ───────────────────────────────────
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
