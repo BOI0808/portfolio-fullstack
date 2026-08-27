@@ -4,7 +4,7 @@ const DOT_COLORS = ["bg-[#ec4899]", "bg-[#a855f7]"];
 
 function SkillRow({ skill, index }: { skill: Skill; index: number }) {
   const dotColor = DOT_COLORS[index % 2];
-  const totalDots = 6;
+  const totalDots = 5;
 
   return (
     <div className="flex items-center justify-between glass-card p-4">
