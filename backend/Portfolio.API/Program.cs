@@ -56,12 +56,16 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
-        policy.WithOrigins(
+    {
+        policy
+            .WithOrigins(
                 "http://localhost:3000",
-                "https://your-portfolio.vercel.app") // cập nhật sau khi deploy
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials());
+                builder.Configuration["AllowedOrigins"] ?? ""
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
 });
 
 // ── Controllers + Swagger ──────────────────────────────
