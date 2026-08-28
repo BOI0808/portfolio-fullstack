@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Portfolio.API.Services;
 using Portfolio.Core.Entities;
 using Portfolio.Core.Interfaces;
 
@@ -7,7 +8,7 @@ namespace Portfolio.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class SkillsController(ISkillRepository repo) : ControllerBase
+public class SkillsController(ISkillRepository repo, RevalidateService revalidateService) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll() =>
@@ -30,6 +31,7 @@ public class SkillsController(ISkillRepository repo) : ControllerBase
     public async Task<IActionResult> Create(Skill skill)
     {
         var created = await repo.CreateAsync(skill);
+        await revalidateService.TriggerRevalidateAsync();
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
@@ -38,6 +40,7 @@ public class SkillsController(ISkillRepository repo) : ControllerBase
     public async Task<IActionResult> Update(Guid id, Skill skill)
     {
         if (id != skill.Id) throw new ArgumentException("ID mismatch.");
+        await revalidateService.TriggerRevalidateAsync();
         return Ok(await repo.UpdateAsync(skill));
     }
 
@@ -48,6 +51,7 @@ public class SkillsController(ISkillRepository repo) : ControllerBase
         var skill = await repo.GetByIdAsync(id);
         if (skill is null) throw new KeyNotFoundException($"Skill {id} not found.");
         await repo.DeleteAsync(skill);
+        await revalidateService.TriggerRevalidateAsync();
         return NoContent();
     }
 }

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Portfolio.API.Services;
 using Portfolio.Core.Entities;
 using Portfolio.Core.Interfaces;
 
@@ -7,7 +8,7 @@ namespace Portfolio.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ProjectsController(IProjectRepository repo) : ControllerBase
+public class ProjectsController(IProjectRepository repo, RevalidateService revalidateService) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll() =>
@@ -30,6 +31,7 @@ public class ProjectsController(IProjectRepository repo) : ControllerBase
     public async Task<IActionResult> Create(Project project)
     {
         var created = await repo.CreateAsync(project);
+        await revalidateService.TriggerRevalidateAsync();
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
@@ -38,6 +40,7 @@ public class ProjectsController(IProjectRepository repo) : ControllerBase
     public async Task<IActionResult> Update(Guid id, Project project)
     {
         if (id != project.Id) throw new ArgumentException("ID mismatch.");
+        await revalidateService.TriggerRevalidateAsync();
         return Ok(await repo.UpdateAsync(project));
     }
 
@@ -48,6 +51,7 @@ public class ProjectsController(IProjectRepository repo) : ControllerBase
         var project = await repo.GetByIdAsync(id);
         if (project is null) throw new KeyNotFoundException($"Project {id} not found.");
         await repo.DeleteAsync(project);
+        await revalidateService.TriggerRevalidateAsync();
         return NoContent();
     }
 }

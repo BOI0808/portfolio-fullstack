@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Portfolio.API.Middleware;
+using Portfolio.API.Services;
 using Portfolio.Core.DTOs;
 using Portfolio.Core.Interfaces;
 using Portfolio.Infrastructure.Data;
@@ -22,6 +23,8 @@ builder.Services.AddScoped<ISkillRepository, SkillRepository>();
 builder.Services.AddScoped<IExperienceRepository, ExperienceRepository>();
 builder.Services.AddScoped<IContactMessageRepository, ContactMessageRepository>();
 builder.Services.AddScoped<IAdminUserRepository, AdminUserRepository>();
+
+builder.Services.AddHttpClient<RevalidateService>();
 
 // ── JWT ────────────────────────────────────────────────
 var jwtSettings = builder.Configuration
