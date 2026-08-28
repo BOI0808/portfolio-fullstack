@@ -10,6 +10,7 @@ using Portfolio.Core.Interfaces;
 using Portfolio.Infrastructure.Data;
 using Portfolio.Infrastructure.Repositories;
 using Portfolio.Infrastructure.Services;
+using Resend;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,6 +52,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<ITokenService, TokenService>();
+
+builder.Services.AddResend(options =>
+{
+    options.ApiToken = builder.Configuration["EmailSettings:ResendApiKey"] ?? "";
+});
+builder.Services.AddTransient<IEmailService, EmailService>();
 
 // ── FluentValidation ───────────────────────────────────
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
