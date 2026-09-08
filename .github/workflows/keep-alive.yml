@@ -2,16 +2,16 @@ name: Keep Supabase Alive
 
 on:
   schedule:
-    - cron: '0 0 * * 1,3,5'
+    # Chạy mỗi 2 ngày một lần lúc 00:00 UTC
+    - cron: "0 0 */2 * *"
   workflow_dispatch:
 
 jobs:
   ping-supabase:
     runs-on: ubuntu-latest
     steps:
-      - name: Send API Request to Supabase
+      - name: Send API Request to Supabase Table
         run: |
-          curl -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/" \
+          curl -s -f -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/Projects?select=Id&limit=1" \
           -H "apikey: ${{ secrets.SUPABASE_KEY }}" \
-          -H "Authorization: Bearer ${{ secrets.SUPABASE_KEY }}" \
-          -I
+          -H "Authorization: Bearer ${{ secrets.SUPABASE_KEY }}"
